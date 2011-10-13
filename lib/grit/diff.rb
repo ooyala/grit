@@ -45,6 +45,8 @@ module Grit
         new_file     = false
         deleted_file = false
         renamed_file = false
+        a_mode = nil
+        b_mode = nil
 
         if lines.first =~ /^new file/
           m, b_mode = lines.shift.match(/^new file mode (.+)$/)
@@ -60,9 +62,12 @@ module Grit
           3.times { lines.shift } # shift away the similarity index line and the 2 `rename from/to ...` lines
         end
 
-        a_blob, b_blob, b_mode = nil, nil, nil
+        a_blob, b_blob = nil, nil
         if !lines.empty? && lines.first !~ /^diff/
-          m, a_blob, b_blob, b_mode = *lines.shift.match(%r{^index ([0-9A-Fa-f]+)\.\.([0-9A-Fa-f]+) ?(.+)?$})
+          match = lines.shift.match(%r{^index ([0-9A-Fa-f]+)\.\.([0-9A-Fa-f]+) ?(.+)?$})
+          a_blob = match[1]
+          b_blob = match[2]
+          b_mode ||= match[3]
           b_mode.strip! if b_mode
         end
 
