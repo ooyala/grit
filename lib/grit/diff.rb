@@ -49,11 +49,11 @@ module Grit
         b_mode = nil
 
         if lines.first =~ /^new file/
-          m, b_mode = lines.shift.match(/^new file mode (.+)$/)
+          m, b_mode = *lines.shift.match(/^new file mode (.+)$/)
           a_mode    = nil
           new_file  = true
         elsif lines.first =~ /^deleted file/
-          m, a_mode    = lines.shift.match(/^deleted file mode (.+)$/)
+          m, a_mode    = *lines.shift.match(/^deleted file mode (.+)$/)
           b_mode       = nil
           deleted_file = true
         elsif lines.first =~ /^similarity index (\d+)\%/
