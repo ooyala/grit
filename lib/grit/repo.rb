@@ -174,6 +174,20 @@ module Grit
     # objects are parsed for now.
     #
     # *shas - Array of String SHAs.
+    # options - Options applied to commands
+    #
+    # Returns an Array of Grit objects (Grit::Commit).
+    def batch_with_options(options = {}, *shas)
+      options = options || {}
+      shas.flatten!
+      text = git.native(:cat_file, {:batch => true, :input => (shas * "\n")}.merge(options))
+      parse_batch(text)
+    end
+
+    # Public: Return the full Git objects from the given SHAs.  Only Commit
+    # objects are parsed for now.
+    #
+    # *shas - Array of String SHAs.
     #
     # Returns an Array of Grit objects (Grit::Commit).
     def batch(*shas)
@@ -212,8 +226,8 @@ module Grit
       self.git.fs_read('description').chomp
     end
 
-    def blame(file, commit = nil)
-      Blame.new(self, file, commit)
+    def blame(file, commit = nil, options = nil)
+      Blame.new(self, file, commit, nil, options)
     end
 
     # An array of Head objects representing the branch heads in
@@ -410,7 +424,7 @@ module Grit
     # The Commits objects that are newer than the specified date.
     # Commits are returned in chronological order.
     #   +start+ is the branch/commit name (default 'master')
-    #   +since+ is a string represeting a date/time
+    #   +since+ is a string representing a date/time
     #   +extra_options+ is a hash of extra options
     #
     # Returns Grit::Commit[] (baked)
