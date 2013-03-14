@@ -10,7 +10,7 @@ class TestGit < Test::Unit::TestCase
   end
 
   def test_method_missing
-    assert_match(/^git version [\w\.]*( \([A-Za-z0-9\-\s]*\))?$/, @git.version)
+    assert_match(/^git version [\w\.]*$/, @git.version)
   end
 
   def test_logs_stderr

@@ -4,21 +4,16 @@ module Grit
 
     attr_reader :lines
 
-    def initialize(repo, file, commit, lines=nil, options=nil)
+    def initialize(repo, file, commit)
       @repo = repo
       @file = file
       @commit = commit
-      @options = options || {}
-      if lines.nil?
-        @lines = []
-        load_blame
-      else
-        @lines = lines
-      end
+      @lines = []
+      load_blame
     end
 
     def load_blame
-      output = @repo.git.blame({'p' => true}.merge(@options), @commit, '--', @file)
+      output = @repo.git.blame({'p' => true}, @commit, '--', @file)
       process_raw_blame(output)
     end
 
@@ -38,7 +33,7 @@ module Grit
       end
 
       # load all commits in single call
-      @repo.batch_with_options(@options, *commits.keys).each do |commit|
+      @repo.batch(*commits.keys).each do |commit|
         commits[commit.id] = commit
       end
 
